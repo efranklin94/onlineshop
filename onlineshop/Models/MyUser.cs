@@ -51,18 +51,8 @@ public class MyUser
         }
         PhoneNumber = phoneNumber;
     }
-    private void SetIsActive(bool isActive)
+    public void SetIsActive(bool isActive)
     { 
         IsActive = isActive; 
-    }
-
-    public void Activate()
-    {
-        SetIsActive(true);
-    }
-
-    public void DeActivate()
-    {
-        SetIsActive(false);
     }
 }
