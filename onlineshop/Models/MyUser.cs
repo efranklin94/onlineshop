@@ -1,0 +1,68 @@
+﻿namespace onlineshop.Models;
+
+public class MyUser
+{
+    public int Id { get; set; }
+    public string FirstName { get; private set; } = string.Empty;
+    public string LastName { get; private set; } = string.Empty;
+    public string PhoneNumber { get; private set; } = string.Empty;
+    public bool IsActive { get; set; }
+
+    private MyUser(string firstName, string lastName, string phoneNumber)
+    {
+        SetFirstName(firstName);
+        SetLastName(lastName);
+        SetPhoneNumber(phoneNumber);
+        SetIsActive(true);
+    }
+
+    public static MyUser Create(string firstName, string lastName, string phoneNumber)
+    {
+        return new MyUser(firstName, lastName, phoneNumber);
+    }
+
+    public void Update(string firstName, string lastName,string phoneNumber)
+    {
+        SetFirstName(firstName);
+        SetLastName(lastName);
+        SetPhoneNumber(phoneNumber);
+    }
+    private void SetFirstName(string firstName)
+    {
+        if (string.IsNullOrEmpty(firstName))
+        {
+            throw new ArgumentNullException(nameof(firstName));
+        }
+        FirstName = firstName; 
+    }
+    private void SetLastName(string lastName)
+    {
+        if (string.IsNullOrEmpty(lastName))
+        {
+            throw new ArgumentNullException(nameof(lastName));
+        }
+        LastName = lastName;
+    }
+    private void SetPhoneNumber(string phoneNumber)
+    {
+        if (string.IsNullOrEmpty(phoneNumber))
+        {
+            throw new ArgumentNullException(nameof(phoneNumber));
+        }
+        PhoneNumber = phoneNumber;
+    }
+    private void SetIsActive(bool isActive)
+    { 
+        IsActive = isActive; 
+    }
+
+    public void Activate()
+    {
+        SetIsActive(true);
+    }
+
+    public void DeActivate()
+    {
+        SetIsActive(false);
+    }
+}
