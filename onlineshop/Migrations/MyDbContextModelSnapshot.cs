@@ -21,13 +21,15 @@ namespace onlineshop.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.HasSequence<int>("UserSequence", "dbo")
+                .IncrementsBy(2);
+
             modelBuilder.Entity("onlineshop.Models.MyUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 2);
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("NEXT VALUE FOR dbo.UserSequence");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
