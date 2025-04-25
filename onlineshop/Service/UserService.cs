@@ -61,7 +61,10 @@ namespace onlineshop.Service
             if (users is null)
             {
                 users = await db.Users
-                    .Where(user => user.FirstName.Contains(query) || user.LastName.Contains(query))
+                    .Where(
+                        user => query == null || query == string.Empty
+                    || (user.FirstName.Contains(query) 
+                    || (user.LastName.Contains(query))))
                     .Select(user => new GetUsersVM
                     {
                         Id = user.Id,
