@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
 using onlineshop.DTOs;
 using onlineshop.Models;
-using onlineshop.Models.ViewModels;
+using onlineshop.ViewModels;
 
 namespace onlineshop.Service
 {
@@ -18,7 +19,7 @@ namespace onlineshop.Service
 
         public async Task UpdateAsync(int id, CreateOrUpdateUserDTO user, CancellationToken cancellationToken)
         {
-            var userEntity = await db.Set<MyUser>().FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
+            var userEntity = await db.Users.FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
                 ?? throw new Exception($"user with id {id} not found.");
 
             userEntity.Update(user.FirstName, user.LastName, user.PhoneNumber);
@@ -29,7 +30,7 @@ namespace onlineshop.Service
 
         public async Task DeleteAsync(int id, CancellationToken cancellationToken)
         {
-            var userEntity = await db.Set<MyUser>().FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
+            var userEntity = await db.Users.FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
                 ?? throw new Exception($"user with id {id} not found.");
 
             db.Remove(userEntity);
@@ -44,7 +45,7 @@ namespace onlineshop.Service
 
             if (userEntity is null)
             {
-                userEntity = await db.Set<MyUser>().FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
+                userEntity = await db.Users.FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
                     ?? throw new Exception($"user with id {id} not found.");
 
                 memoryCache.Set(id, userEntity, DateTime.Now.AddSeconds(30));
@@ -53,13 +54,13 @@ namespace onlineshop.Service
             return userEntity;
         }
 
-        public async Task<List<GetUsersVM>> GetListAsync(string query, CancellationToken cancellationToken)
+        public async Task<List<GetUsersVM>> GetListAsync(string? query, CancellationToken cancellationToken)
         {
             var users = memoryCache.Get<List<GetUsersVM>>("UserList_" + query);
 
             if (users is null)
             {
-                users = await db.Set<MyUser>()
+                users = await db.Users
                     .Where(user => user.FirstName.Contains(query) || user.LastName.Contains(query))
                     .Select(user => new GetUsersVM
                     {
@@ -79,7 +80,7 @@ namespace onlineshop.Service
 
         public async Task ToggleActivationAsync(int id, CancellationToken cancellationToken)
         {
-            var userEntity = await db.Set<MyUser>().FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
+            var userEntity = await db.Users.FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
                 ?? throw new Exception($"user with id {id} not found.");
 
             userEntity.SetIsActive(!userEntity.IsActive);

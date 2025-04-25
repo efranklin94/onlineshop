@@ -24,8 +24,8 @@ namespace onlineshop.Controllers
             return Ok(user);
         }
 
-        [HttpGet("{query}")]
-        public async Task<IActionResult> GetUsers([FromRoute] string query,CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> GetUsers([FromQuery] string? query,CancellationToken cancellationToken)
         {
             var entities = await userService.GetListAsync(query, cancellationToken);
 
@@ -48,16 +48,8 @@ namespace onlineshop.Controllers
             return Ok();
         }
 
-        [HttpPut("{id:int}/Activate")]
-        public async Task<IActionResult> Activate([FromRoute] int id, CancellationToken cancellationToken)
-        {
-            await userService.ToggleActivationAsync(id, cancellationToken);
-
-            return Ok();
-        }
-
-        [HttpPut("{id:int}/DeActivate")]
-        public async Task<IActionResult> DeActivate([FromRoute] int id, CancellationToken cancellationToken)
+        [HttpPut("{id:int}/ToggleActivation")]
+        public async Task<IActionResult> ToggleActivation([FromRoute] int id, CancellationToken cancellationToken)
         {
             await userService.ToggleActivationAsync(id, cancellationToken);
 
