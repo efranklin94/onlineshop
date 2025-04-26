@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.IdentityModel.Tokens;
 using onlineshop.DTOs;
 using onlineshop.Models;
 using onlineshop.ViewModels;
@@ -9,12 +8,19 @@ namespace onlineshop.Service
 {
     public class UserService(MyDbContext db, IMemoryCache memoryCache) : IUserService
     {
+        private const string UserListCachePrefix = "UserList_";
+
+        // A list to store the keys 
+        private static readonly List<string> cacheKeys = new List<string>();
+
         public async Task CreateAsync(CreateOrUpdateUserDTO user, CancellationToken cancellationToken)
         {
             var userEntity = MyUser.Create(user.FirstName, user.LastName, user.PhoneNumber);
 
             await db.AddAsync(userEntity, cancellationToken);
             await db.SaveChangesAsync(cancellationToken);
+
+            DeleteUserListCache();
         }
 
         public async Task UpdateAsync(int id, CreateOrUpdateUserDTO user, CancellationToken cancellationToken)
@@ -25,7 +31,7 @@ namespace onlineshop.Service
             userEntity.Update(user.FirstName, user.LastName, user.PhoneNumber);
             await db.SaveChangesAsync(cancellationToken);
 
-            memoryCache.Remove(id);
+            DeleteUserListCache();
         }
 
         public async Task DeleteAsync(int id, CancellationToken cancellationToken)
@@ -36,7 +42,7 @@ namespace onlineshop.Service
             db.Remove(userEntity);
             await db.SaveChangesAsync(cancellationToken);
 
-            memoryCache.Remove(id);
+            DeleteUserListCache();
         }
 
         public async Task<MyUser> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -48,7 +54,7 @@ namespace onlineshop.Service
                 userEntity = await db.Users.FirstOrDefaultAsync(a => a.Id == id, cancellationToken)
                     ?? throw new Exception($"user with id {id} not found.");
 
-                memoryCache.Set(id, userEntity, DateTime.Now.AddSeconds(30));
+                memoryCache.Set(id, userEntity, DateTime.Now.AddSeconds(300));
             }
 
             return userEntity;
@@ -56,7 +62,9 @@ namespace onlineshop.Service
 
         public async Task<List<GetUsersVM>> GetListAsync(string? query, CancellationToken cancellationToken)
         {
-            var users = memoryCache.Get<List<GetUsersVM>>("UserList_" + query);
+            var cacheKey = $"{UserListCachePrefix}{query}";
+
+            var users = memoryCache.Get<List<GetUsersVM>>(cacheKey);
 
             if (users is null)
             {
@@ -76,7 +84,8 @@ namespace onlineshop.Service
                     })
                     .ToListAsync(cancellationToken);
 
-                memoryCache.Set("UserList_" + query, users, DateTime.Now.AddSeconds(30));
+                memoryCache.Set(cacheKey, users, DateTime.Now.AddSeconds(300));
+                cacheKeys.Add(cacheKey);
             }
             return users;
         }
@@ -89,7 +98,17 @@ namespace onlineshop.Service
             userEntity.SetIsActive(!userEntity.IsActive);
             await db.SaveChangesAsync(cancellationToken);
 
-            memoryCache.Remove(id);
+            DeleteUserListCache();
+        }
+
+        private void DeleteUserListCache()
+        {
+            foreach (var key in cacheKeys)
+            {
+                memoryCache.Remove(key);
+            }
+
+            cacheKeys.Clear();
         }
     }
 }
