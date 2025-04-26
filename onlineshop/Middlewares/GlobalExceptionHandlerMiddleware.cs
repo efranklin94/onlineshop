@@ -18,6 +18,10 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next)
         {
             await SetContext(context, ex.Message, StatusCodes.Status404NotFound);
         }
+        catch (TooManyRequestException ex)
+        {
+            await SetContext(context, ex.Message, StatusCodes.Status429TooManyRequests);
+        }
         catch (Exception ex)
         {
             await SetContext(context, ex.Message, StatusCodes.Status500InternalServerError);

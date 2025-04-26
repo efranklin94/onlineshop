@@ -38,5 +38,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<RateLimitMiddleware>();
 
 app.Run();
