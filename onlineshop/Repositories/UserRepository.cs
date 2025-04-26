@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using onlineshop.Data;
 using onlineshop.Models;
 
 namespace onlineshop.Repositories
@@ -7,19 +8,19 @@ namespace onlineshop.Repositories
     {
         private readonly DbSet<MyUser> set = db.Set<MyUser>();
 
-        public async Task AddAsync(MyUser modelA, CancellationToken cancellationToken)
+        public async Task AddAsync(MyUser user, CancellationToken cancellationToken)
         {
-            await set.AddAsync(modelA, cancellationToken);
+            await set.AddAsync(user, cancellationToken);
         }
 
-        public void Update(MyUser modelA)
+        public void Update(MyUser user)
         {
-            set.Update(modelA);
+            set.Update(user);
         }
 
-        public void Delete(MyUser modelA)
+        public void Delete(MyUser user)
         {
-            set.Remove(modelA);
+            set.Remove(user);
         }
 
         public async Task<MyUser?> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -27,9 +28,19 @@ namespace onlineshop.Repositories
             return await set.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
-        public async Task<List<MyUser>> GetListAsync(CancellationToken cancellationToken)
+        public async Task<List<MyUser>> GetListAsync(string query, CancellationToken cancellationToken)
         {
-            return await set.AsNoTracking().ToListAsync(cancellationToken);
+            var users = db.Users.AsNoTracking();
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                users = users.Where(u =>
+                    u.FirstName.Contains(query) ||
+                    u.LastName.Contains(query)
+                );
+            }
+
+            return await users.ToListAsync(cancellationToken);
         }
     }
 }

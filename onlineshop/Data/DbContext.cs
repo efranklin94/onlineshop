@@ -2,7 +2,7 @@
 using onlineshop.Helpers;
 using onlineshop.Models;
 
-namespace onlineshop;
+namespace onlineshop.Data;
 
 public class MyDbContext(DbContextOptions options) : DbContext(options)
 {

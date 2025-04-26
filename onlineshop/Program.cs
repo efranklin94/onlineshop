@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using onlineshop;
+using onlineshop.Data;
+using onlineshop.Middlewares;
+using onlineshop.Repositories;
 using onlineshop.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
@@ -32,5 +36,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.Run();
