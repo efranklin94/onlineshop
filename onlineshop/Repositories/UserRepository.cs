@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using onlineshop.Data;
 using onlineshop.Models;
 
@@ -28,19 +29,19 @@ namespace onlineshop.Repositories
             return await set.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
-        public async Task<List<MyUser>> GetListAsync(string query, CancellationToken cancellationToken)
+        public async Task<List<MyUser>> GetListAsync(string? query, CancellationToken cancellationToken)
         {
-            var users = db.Users.AsNoTracking();
+            var usersQuery = db.Users.AsNoTracking();
 
             if (!string.IsNullOrEmpty(query))
             {
-                users = users.Where(u =>
+                usersQuery = usersQuery.Where(u =>
                     u.FirstName.Contains(query) ||
                     u.LastName.Contains(query)
                 );
             }
 
-            return await users.ToListAsync(cancellationToken);
+            return await usersQuery.ToListAsync(cancellationToken);
         }
     }
 }

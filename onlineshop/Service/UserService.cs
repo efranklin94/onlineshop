@@ -11,8 +11,7 @@ namespace onlineshop.Service
     {
         private const string UserListCachePrefix = "UserList_";
 
-        // A list to store the keys 
-        private static readonly List<string> cacheKeys = new List<string>();
+        private static readonly List<string> cacheKeys = [];
 
         public async Task CreateAsync(CreateOrUpdateUserDTO user, CancellationToken cancellationToken)
         {
@@ -32,6 +31,7 @@ namespace onlineshop.Service
             userEntity.Update(user.FirstName, user.LastName, user.PhoneNumber);
             await unitOfWork.CommitAsync(cancellationToken);
 
+            memoryCache.Remove(id);
             DeleteUserListCache();
         }
 
@@ -43,6 +43,7 @@ namespace onlineshop.Service
             unitOfWork.UserRepository.Delete(userEntity);
             await unitOfWork.CommitAsync(cancellationToken);
 
+            memoryCache.Remove(id);
             DeleteUserListCache();
         }
 
@@ -87,6 +88,7 @@ namespace onlineshop.Service
             userEntity.SetIsActive(!userEntity.IsActive);
             await unitOfWork.CommitAsync(cancellationToken);
 
+            memoryCache.Remove(id);
             DeleteUserListCache();
         }
 

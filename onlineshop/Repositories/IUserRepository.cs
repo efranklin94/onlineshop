@@ -8,6 +8,6 @@ namespace onlineshop.Repositories
         public void Update(MyUser user);
         public void Delete(MyUser user);
         public Task<MyUser?> GetByIdAsync(int id, CancellationToken cancellationToken);
-        public Task<List<MyUser>> GetListAsync(string query, CancellationToken cancellationToken);
+        public Task<List<MyUser>> GetListAsync(string? query, CancellationToken cancellationToken);
     }
 }
