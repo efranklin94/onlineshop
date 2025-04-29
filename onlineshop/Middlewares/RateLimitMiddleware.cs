@@ -5,7 +5,7 @@ namespace onlineshop.Middlewares;
 
 public class RateLimitMiddleware(RequestDelegate next, IMemoryCache memoryCache)
 {
-    private readonly TimeSpan timeLimit = TimeSpan.FromMinutes(1);
+    private readonly TimeSpan timeLimit = TimeSpan.FromSeconds(1);
     private readonly int countLimit = 10;
 
     public async Task Invoke(HttpContext context)
