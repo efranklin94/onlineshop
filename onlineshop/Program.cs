@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using onlineshop.Data;
 using onlineshop.Features;
+using onlineshop.Filters;
 using onlineshop.Middlewares;
 using onlineshop.Repositories;
 using onlineshop.Service;
@@ -11,7 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MyDbContext>(options => options.UseSqlServer(connectionString));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<CacheResponseActionFilter>();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -34,12 +38,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
-app.MapControllers();
-
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
+app.UseMiddleware<IdempotencyMiddleware>();
+
+app.UseAuthorization();
+app.MapControllers();
 
 app.MapGet("/Cities", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
