@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using onlineshop.Data;
+using onlineshop.Features;
 using onlineshop.Middlewares;
 using onlineshop.Repositories;
 using onlineshop.Service;
@@ -39,5 +40,11 @@ app.MapControllers();
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
+
+app.MapGet("/Cities", async (MyDbContext db, CancellationToken cancellationToken) =>
+{
+    var entities = await db.Cities.ToListAsync(cancellationToken);
+    return BaseResult.Success(entities);
+}).WithTags("Cities");
 
 app.Run();
