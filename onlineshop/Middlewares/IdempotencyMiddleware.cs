@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Caching.Memory;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using static onlineshop.Middlewares.IdempotencyMiddleware;
 
 namespace onlineshop.Middlewares;
 
@@ -13,30 +15,47 @@ public class IdempotencyMiddleware(RequestDelegate next, IMemoryCache memoryCach
         var method = context.Request.Method;
         var path = context.Request.Path.ToString();
         var query = context.Request.QueryString.HasValue? context.Request.QueryString.Value : string.Empty;
-        var combinedKey = $"{IpAddress}-{method}-{path}-{query}";
+        //requestBody 
+
+        var bodyString = string.Empty;
+
+        context.Request.EnableBuffering();
+        using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8, leaveOpen: true))
+        {
+            bodyString = await reader.ReadToEndAsync();
+            context.Request.Body.Position = 0;
+        }
+
+        var combinedKey = $"{IpAddress}-{method}-{path}-{query}-{bodyString}";
         var cacheKey = ComputeMD5Hash(combinedKey);
 
-        if (memoryCache.TryGetValue(cacheKey, out var cachedObject))
+        if (memoryCache.TryGetValue(cacheKey, out CachedResponse? cachedResponse))
         {
-            Console.WriteLine($"{JsonSerializer.Serialize(cachedObject)} is fetched from the idempotent cache");
-
             context.Response.ContentType = "application/json";
-            await context.Response.WriteAsync(JsonSerializer.Serialize(cachedObject));
-
+            context.Response.StatusCode = cachedResponse!.StatusCode;
+            await context.Response.WriteAsync(cachedResponse.Content);
             return;
         }
 
+        var originalResponseBody = context.Response.Body;
+        using var newResponseBody = new MemoryStream();
+        context.Response.Body = newResponseBody;
+
         await next(context);
 
-        if (context.Items.TryGetValue("IdempotencyResponse", out var result))
-        {
-            Console.WriteLine($"{result?.ToString()} is wrote to the idempotent cache");
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
+        var responseText = new StreamReader(context.Response.Body).ReadToEnd();
+        context.Response.Body.Seek(0, SeekOrigin.Begin);
 
-            memoryCache.Set(cacheKey, result, new MemoryCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30)
-            });
-        }
+        var cacheEntry = new CachedResponse
+        {
+            StatusCode = context.Response.StatusCode,
+            Content = responseText
+        };
+
+        memoryCache.Set(cacheKey, cacheEntry, TimeSpan.FromSeconds(5));
+
+        await newResponseBody.CopyToAsync(originalResponseBody);
     }
 
     private static string ComputeMD5Hash(string input)
@@ -52,5 +71,11 @@ public class IdempotencyMiddleware(RequestDelegate next, IMemoryCache memoryCach
                 sb.Append(b.ToString("X2"));
             return sb.ToString();
         }
+    }
+
+    public class CachedResponse
+    {
+        public int StatusCode { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }

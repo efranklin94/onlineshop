@@ -38,9 +38,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<IdempotencyMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
-app.UseMiddleware<IdempotencyMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
@@ -49,6 +49,6 @@ app.MapGet("/Cities", async (MyDbContext db, CancellationToken cancellationToken
 {
     var entities = await db.Cities.ToListAsync(cancellationToken);
     return BaseResult.Success(entities);
-}).WithTags("Cities");
+}).WithTags("City");
 
 app.Run();
