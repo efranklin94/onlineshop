@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using onlineshop.DTOs;
+using onlineshop.Features;
 using onlineshop.Service;
 
 namespace onlineshop.Controllers
@@ -13,7 +14,7 @@ namespace onlineshop.Controllers
         {
             await userService.CreateAsync(input, cancellationToken);
 
-            return Ok();
+            return Ok(BaseResult.Success());
         }
 
         [HttpGet("{id:int}")]
@@ -21,7 +22,7 @@ namespace onlineshop.Controllers
         {
             var user = await userService.GetByIdAsync(id, cancellationToken);
 
-            return Ok(user);
+            return Ok(BaseResult.Success(user));
         }
 
         [HttpGet]
@@ -29,7 +30,7 @@ namespace onlineshop.Controllers
         {
             var entities = await userService.GetListAsync(query, cancellationToken);
 
-            return Ok(entities);
+            return Ok(BaseResult.Success(entities));
         }
 
         [HttpPut("{id:int}")]
@@ -37,7 +38,7 @@ namespace onlineshop.Controllers
         {
             await userService.UpdateAsync(id, input, cancellationToken);
 
-            return Ok();
+            return Ok(BaseResult.Success());
         }
 
         [HttpDelete("{id:int}")]
@@ -45,7 +46,7 @@ namespace onlineshop.Controllers
         {
             await userService.DeleteAsync(id, cancellationToken);
 
-            return Ok();
+            return Ok(BaseResult.Success());
         }
 
         [HttpPut("{id:int}/ToggleActivation")]
@@ -53,7 +54,7 @@ namespace onlineshop.Controllers
         {
             await userService.ToggleActivationAsync(id, cancellationToken);
 
-            return Ok();
+            return Ok(BaseResult.Success());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using onlineshop.Exceptions;
+using onlineshop.Features;
 using System.Text.Json;
 namespace onlineshop.Middlewares;
 
@@ -32,6 +33,8 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next)
     {
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
+
+        var result = BaseResult.Fail(message);
         await context.Response.WriteAsync(JsonSerializer.Serialize(message));
     }
 }
