@@ -31,6 +31,8 @@ namespace onlineshop.Service
                 ?? throw new NotFoundException($"user with id {id} not found.");
 
             userEntity.Update(user.FirstName, user.LastName, user.PhoneNumber);
+            
+            unitOfWork.UserRepository.Update(userEntity);
             await unitOfWork.CommitAsync(cancellationToken);
 
             memoryCache.Remove(id);
@@ -90,6 +92,8 @@ namespace onlineshop.Service
                 ?? throw new NotFoundException($"user with id {id} not found.");
 
             userEntity.SetIsActive(!userEntity.IsActive);
+
+            unitOfWork.UserRepository.Update(userEntity);
             await unitOfWork.CommitAsync(cancellationToken);
 
             memoryCache.Remove(id);
