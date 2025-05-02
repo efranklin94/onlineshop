@@ -2,7 +2,9 @@
 using onlineshop.Data;
 using onlineshop.DTOs;
 using onlineshop.Exceptions;
+using onlineshop.Features;
 using onlineshop.Models;
+using onlineshop.Specifications;
 using onlineshop.ViewModels;
 
 namespace onlineshop.Service
@@ -56,25 +58,27 @@ namespace onlineshop.Service
                 userEntity = await unitOfWork.UserRepository.GetByIdAsync(id, cancellationToken)
                     ?? throw new NotFoundException($"user with id {id} not found.");
 
-                memoryCache.Set(id, userEntity, DateTime.Now.AddSeconds(300));
+                memoryCache.Set(id, userEntity, DateTime.Now.AddSeconds(5));
             }
 
             return userEntity;
         }
 
-        public async Task<List<GetUsersVM>> GetListAsync(string? query, CancellationToken cancellationToken)
+        public async Task<List<GetUsersVM>> GetListAsync(string? query, OrderType orderType, CancellationToken cancellationToken)
         {
-            var cacheKey = $"{UserListCachePrefix}{query}";
+            var cacheKey = $"{UserListCachePrefix}{query}{orderType}";
 
             var entities = memoryCache.Get<List<GetUsersVM>>(cacheKey);
 
             if (entities is null)
             {
-                var users = await unitOfWork.UserRepository.GetListAsync(query, cancellationToken);
+                var specification = new GetModelAsByContainsFirstNameAndLastNameSpecification(query, orderType);
+
+                var users = await unitOfWork.UserRepository.GetListAsync(specification, cancellationToken);
 
                 entities = users.Select(UserMapToViewModel).ToList();
 
-                memoryCache.Set(cacheKey, entities, DateTime.Now.AddSeconds(300));
+                memoryCache.Set(cacheKey, entities, DateTime.Now.AddSeconds(5));
                 cacheKeys.Add(cacheKey);
             }
             return entities;
