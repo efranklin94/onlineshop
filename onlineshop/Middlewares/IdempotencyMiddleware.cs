@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
-using static onlineshop.Middlewares.IdempotencyMiddleware;
 
 namespace onlineshop.Middlewares;
 
@@ -15,10 +12,8 @@ public class IdempotencyMiddleware(RequestDelegate next, IMemoryCache memoryCach
         var method = context.Request.Method;
         var path = context.Request.Path.ToString();
         var query = context.Request.QueryString.HasValue? context.Request.QueryString.Value : string.Empty;
-        //requestBody 
-
+        
         var bodyString = string.Empty;
-
         context.Request.EnableBuffering();
         using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8, leaveOpen: true))
         {
