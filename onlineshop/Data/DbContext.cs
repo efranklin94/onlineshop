@@ -32,13 +32,16 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
             )
             .HasMaxLength(256);
 
-        modelBuilder.Entity<MyUser>().Property<DateTime>("UpdatedAt");
-        modelBuilder.Entity<MyUser>().Property<DateTime>("CreatedAt");
-        modelBuilder.Entity<MyUser>().Property<DateTime>("DeletedAt");
+        modelBuilder.Entity<MyUser>().Property<DateTime>("CreatedAt").IsRequired();
+        modelBuilder.Entity<MyUser>().Property<DateTime?>("UpdatedAt");
+        modelBuilder.Entity<MyUser>().Property<DateTime?>("DeletedAt");
         modelBuilder.Entity<MyUser>().Property<bool>("IsDeleted");
 
         // Only return the non-deleted items
         modelBuilder.Entity<MyUser>().HasQueryFilter(x => EF.Property<bool>(x, "IsDeleted") == false);
+
+        modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
+
 
         base.OnModelCreating(modelBuilder);
         #endregion
@@ -110,10 +113,11 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
             if (entry.Metadata.FindProperty("IsDeleted") != null)
             {
                 entry.Property("IsDeleted").CurrentValue = true;
+
+                // prevent from deleting physically
+                entry.State = EntityState.Modified;
             }
 
-            // prevent from deleting physically
-            entry.State = EntityState.Modified;
         }
     }
 }

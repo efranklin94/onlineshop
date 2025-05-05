@@ -17,7 +17,7 @@ namespace onlineshop.Service
 
         public async Task CreateAsync(CreateOrUpdateUserDTO user, CancellationToken cancellationToken)
         {
-            var userEntity = MyUser.Create(user.FirstName, user.LastName, user.PhoneNumber);
+            var userEntity = MyUser.Create(user.FirstName, user.LastName, user.PhoneNumber, user.Email);
 
             await unitOfWork.UserRepository.AddAsync(userEntity, cancellationToken);
             await unitOfWork.CommitAsync(cancellationToken);
