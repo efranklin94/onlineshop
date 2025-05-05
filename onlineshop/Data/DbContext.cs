@@ -46,17 +46,27 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
         base.OnModelCreating(modelBuilder);
         #endregion
 
-        #region City
+        #region City & Country
         modelBuilder.Entity<City>().HasKey(x => x.Id);
         modelBuilder.Entity<City>().Property(x => x.Name).HasMaxLength(50);
-        modelBuilder.Entity<City>().Property(x => x.Country).HasMaxLength(50);
+
+        modelBuilder.Entity<City>().HasOne(city => city.Country).WithMany(country => country.Cities).HasForeignKey(city => city.CountryId);
+
+        modelBuilder.Entity<Country>().HasKey(x => x.Id);
+        modelBuilder.Entity<City>().Property(x => x.Name).HasMaxLength(50);
+
+        modelBuilder.Entity<Country>().HasData(
+            new Country { Id = 1, Name = "Iran" },
+            new Country { Id = 2, Name = "USA" },
+            new Country { Id = 3, Name = "France" }
+        );
 
         modelBuilder.Entity<City>().HasData([
-            new City{ Id = 1, Name = "Tehran", Country = "Iran" },
-            new City{ Id = 2, Name = "Tabriz", Country = "Iran"  },
-            new City{ Id = 3, Name = "Semnan", Country = "Iran"  },
-            new City{ Id = 4, Name = "New York", Country = "USA"  },
-            new City{ Id = 5, Name = "Paris", Country = "France"  },
+            new City{ Id = 1, Name = "Tehran", CountryId = 1 },
+            new City{ Id = 2, Name = "Tabriz", CountryId = 1 },
+            new City{ Id = 3, Name = "Semnan", CountryId = 1 },
+            new City{ Id = 4, Name = "New York", CountryId = 2 },
+            new City{ Id = 5, Name = "Paris", CountryId = 3 },
         ]);
         #endregion
     }
