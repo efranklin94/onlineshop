@@ -26,9 +26,9 @@ namespace onlineshop.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetUsers(CancellationToken cancellationToken, [FromQuery] string? query, [FromQuery] OrderType orderType = OrderType.Ascending)
+        public async Task<IActionResult> GetUsers([FromQuery] string? query, [FromQuery] OrderType? orderType, [FromQuery] int? pageSize, [FromQuery] int? pageNumber, CancellationToken cancellationToken)
         {
-            var entities = await userService.GetListAsync(query, orderType, cancellationToken);
+            var entities = await userService.GetListAsync(query, orderType, pageSize, pageNumber, cancellationToken);
 
             return Ok(BaseResult.Success(entities));
         }

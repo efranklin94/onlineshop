@@ -9,13 +9,13 @@ public class MyUser
     public bool IsActive { get; set; }
     public string? Email { get; set; }
 
-    private MyUser(string firstName, string lastName, string phoneNumber, string email)
+    private MyUser(string firstName, string lastName, string phoneNumber, string? email)
     {
         SetFirstName(firstName);
         SetLastName(lastName);
         SetPhoneNumber(phoneNumber);
         SetIsActive(true);
-        SetEmail(email);
+        SetEmail(email!);
     }
 
     public static MyUser Create(string firstName, string lastName, string phoneNumber, string email)
@@ -58,13 +58,8 @@ public class MyUser
         IsActive = isActive; 
     }
 
-    private void SetEmail(string email)
+    private void SetEmail(string? email)
     {
-        if (string.IsNullOrEmpty(email))
-        {
-            throw new ArgumentNullException(nameof(email));
-        }
-
         Email = email;
     }
 }

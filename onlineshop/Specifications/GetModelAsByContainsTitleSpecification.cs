@@ -5,7 +5,7 @@ namespace onlineshop.Specifications;
 
 public class GetModelAsByContainsFirstNameAndLastNameSpecification : BaseSpecification<MyUser>
 {
-    public GetModelAsByContainsFirstNameAndLastNameSpecification(string? q, OrderType orderType)
+    public GetModelAsByContainsFirstNameAndLastNameSpecification(string? q, OrderType? orderType, int? pageSize, int? pageNumber)
     {
         AddCriteria(x => x.IsActive);
 
@@ -14,7 +14,15 @@ public class GetModelAsByContainsFirstNameAndLastNameSpecification : BaseSpecifi
             AddCriteria(x => x.FirstName.Contains(q) || x.LastName.Contains(q));
         }
 
-        AddOrderBy(x => x.Id, orderType);
+        if (orderType.HasValue)
+        {
+            AddOrderBy(x => x.Id, orderType.Value);
+        }
+
+        if (pageSize.HasValue && pageNumber.HasValue)
+        {
+            AddPagination(pageSize.Value, pageNumber.Value);
+        }
     }
 }
 

@@ -4,6 +4,10 @@ namespace onlineshop.Features;
 
 public class BaseSpecification<TEntity>
 {
+    public bool IsPaginationEnabled { get; private set; }
+    public int Skip { get; private set; }
+    public int Take { get; private set; }
+
     public Expression<Func<TEntity, bool>>? Criteria { get; set; }
     public Expression<Func<TEntity, object>>? OrderByExpression { get; set; }
     public Expression<Func<TEntity, object>>? OrderByDescendingExpression { get; set; }
@@ -51,4 +55,12 @@ public class BaseSpecification<TEntity>
             return base.VisitParameter(node);
         }
     }
+
+    protected void AddPagination(int pageSize, int pageNumber)
+    {
+        Skip = (pageNumber - 1) * pageSize;
+        Take = pageSize;
+        IsPaginationEnabled = true;
+    }
+
 }

@@ -66,19 +66,19 @@ namespace onlineshop.Service
             return userEntity;
         }
 
-        public async Task<List<GetUsersVM>> GetListAsync(string? query, OrderType orderType, CancellationToken cancellationToken)
+        public async Task<PaginationResult<MyUser>> GetListAsync(string? query, OrderType? orderType, int? pageSize, int? pageNumber, CancellationToken cancellationToken)
         {
             var cacheKey = $"{UserListCachePrefix}{query}{orderType}";
 
-            var entities = memoryCache.Get<List<GetUsersVM>>(cacheKey);
+            var entities = memoryCache.Get<PaginationResult<MyUser>>(cacheKey);
 
             if (entities is null)
             {
-                var specification = new GetModelAsByContainsFirstNameAndLastNameSpecification(query, orderType);
+                var specification = new GetModelAsByContainsFirstNameAndLastNameSpecification(query, orderType, pageSize, pageNumber);
 
-                var users = await unitOfWork.UserRepository.GetListAsync(specification, cancellationToken);
+                var (totalCount, users) = await unitOfWork.UserRepository.GetListAsync(specification, cancellationToken);
 
-                entities = users.Select(UserMapToViewModel).ToList();
+                entities = PaginationResult<MyUser>.Create(pageSize ?? 0, pageNumber ?? 0, totalCount, users);
 
                 memoryCache.Set(cacheKey, entities, DateTime.Now.AddSeconds(5));
                 cacheKeys.Add(cacheKey);

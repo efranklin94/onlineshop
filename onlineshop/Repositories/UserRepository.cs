@@ -3,6 +3,7 @@ using onlineshop.Data;
 using onlineshop.Features;
 using onlineshop.Helpers;
 using onlineshop.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace onlineshop.Repositories;
 
@@ -30,10 +31,20 @@ public class UserRepository(MyDbContext db) : IUserRepository
         return await set.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
-    public async Task<List<MyUser>> GetListAsync(BaseSpecification<MyUser> specification, CancellationToken cancellationToken)
+    public async Task<(int, List<MyUser>)> GetListAsync(BaseSpecification<MyUser> specification, CancellationToken cancellationToken)
     {
         var usersQuery = db.Users.AsNoTracking().Specify(specification);
 
-        return await usersQuery.ToListAsync(cancellationToken);
+        var totalCount = 0;
+
+        if (specification.IsPaginationEnabled)
+        {
+            totalCount = await usersQuery.CountAsync(cancellationToken);
+            usersQuery = usersQuery.Skip(specification.Skip).Take(specification.Take);
+        }
+
+        var users = await usersQuery.ToListAsync(cancellationToken);
+
+        return (totalCount, users);
     }
 }
