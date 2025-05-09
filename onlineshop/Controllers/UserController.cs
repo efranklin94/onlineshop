@@ -1,4 +1,6 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using onlineshop.Commands.User.Create;
 using onlineshop.DTOs;
 using onlineshop.Features;
 using onlineshop.Service;
@@ -7,12 +9,13 @@ namespace onlineshop.Controllers
 {
     [ApiController]
     [Route("Users")]
-    public class UserController(IUserService userService) : ControllerBase
+    public class UserController(IUserService userService, IMediator mediator) : ControllerBase
     {
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateOrUpdateUserDTO input, CancellationToken cancellationToken)
         {
-            await userService.CreateAsync(input, cancellationToken);
+            var command = new CreateUserCommand(input);
+            await mediator.Send(command, cancellationToken);
 
             return Ok(BaseResult.Success());
         }

@@ -74,7 +74,7 @@ namespace onlineshop.Service
 
             if (entities is null)
             {
-                var specification = new GetModelAsByContainsFirstNameAndLastNameSpecification(query, orderType, pageSize, pageNumber);
+                var specification = new GetUsersByContainsFirstNameAndLastNameSpecification(query, orderType, pageSize, pageNumber);
 
                 var (totalCount, users) = await unitOfWork.UserRepository.GetListAsync(specification, cancellationToken);
 

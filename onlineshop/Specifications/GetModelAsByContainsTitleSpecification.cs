@@ -3,9 +3,9 @@ using onlineshop.Models;
 
 namespace onlineshop.Specifications;
 
-public class GetModelAsByContainsFirstNameAndLastNameSpecification : BaseSpecification<MyUser>
+public class GetUsersByContainsFirstNameAndLastNameSpecification : BaseSpecification<MyUser>
 {
-    public GetModelAsByContainsFirstNameAndLastNameSpecification(string? q, OrderType? orderType, int? pageSize, int? pageNumber)
+    public GetUsersByContainsFirstNameAndLastNameSpecification(string? q, OrderType? orderType, int? pageSize, int? pageNumber)
     {
         AddCriteria(x => x.IsActive);
 
