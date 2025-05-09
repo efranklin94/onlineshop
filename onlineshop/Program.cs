@@ -27,6 +27,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddMediatR(options =>
+{
+    options.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
