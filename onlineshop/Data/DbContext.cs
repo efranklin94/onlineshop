@@ -53,7 +53,7 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
         modelBuilder.Entity<City>().HasOne(city => city.Country).WithMany(country => country.Cities).HasForeignKey(city => city.CountryId);
 
         modelBuilder.Entity<Country>().HasKey(x => x.Id);
-        modelBuilder.Entity<City>().Property(x => x.Name).HasMaxLength(50);
+        modelBuilder.Entity<Country>().Property(x => x.Name).HasMaxLength(50);
 
         modelBuilder.Entity<Country>().HasData(
             new Country { Id = 1, Name = "Iran" },
@@ -62,11 +62,11 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
         );
 
         modelBuilder.Entity<City>().HasData([
-            new City{ Id = 1, Name = "Tehran", CountryId = 1 },
-            new City{ Id = 2, Name = "Tabriz", CountryId = 1 },
-            new City{ Id = 3, Name = "Semnan", CountryId = 1 },
-            new City{ Id = 4, Name = "New York", CountryId = 2 },
-            new City{ Id = 5, Name = "Paris", CountryId = 3 },
+            new City{ Id = 1, Name = "Tehran", CountryId = 1 , Type = Enums.CitiesType.Capital},
+            new City{ Id = 2, Name = "Tabriz", CountryId = 1 , Type = Enums.CitiesType.Metropolis},
+            new City{ Id = 3, Name = "Semnan", CountryId = 1 , Type = Enums.CitiesType.SmallCity},
+            new City{ Id = 4, Name = "New York", CountryId = 2 , Type = Enums.CitiesType.Metropolis},
+            new City{ Id = 5, Name = "Paris", CountryId = 3 , Type = Enums.CitiesType.Metropolis},
         ]);
         #endregion
     }

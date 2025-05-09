@@ -1,9 +1,13 @@
+using Humanizer;
 using Microsoft.EntityFrameworkCore;
+using onlineshop.Attributes;
 using onlineshop.Data;
 using onlineshop.Features;
 using onlineshop.Middlewares;
 using onlineshop.Repositories;
 using onlineshop.Service;
+using onlineshop.ViewModels;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,8 +47,48 @@ app.MapControllers();
 
 app.MapGet("/Cities", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
-    var entities = await db.Cities.ToListAsync(cancellationToken);
+    var entities = await db.Cities
+        // populate country
+        .Include(city => city.Country)
+        .ToListAsync(cancellationToken);
+    
     return BaseResult.Success(entities);
 }).WithTags("City");
+
+var enumTypes = AppDomain.CurrentDomain.GetAssemblies()
+    .SelectMany(assembly => assembly.GetTypes())
+    .Where(t => t.IsEnum
+                && t.Namespace != null
+                && t.Namespace.Contains("onlineshop.Enums")
+                && t.GetCustomAttributes(typeof(EnumEndpointAttribute), false).Length != 0)
+    .ToList();
+
+foreach (var enumType in enumTypes)
+{
+    var attribute = (enumType.GetCustomAttribute(typeof(EnumEndpointAttribute)) as EnumEndpointAttribute)!;
+    var route = attribute.Route;
+
+    app.MapGet(route, () =>
+    {
+        var enumValues = Enum.GetValues(enumType)
+                             .Cast<Enum>()
+                             .Select(e => new EnumViewModel
+                             {
+                                 Id = (int)(object)e,
+                                 Title = e.ToString(),
+                                 Description = e.Humanize(),
+                                 //Populate the Infos
+                                 Infos = enumType
+                                    .GetMember(e.ToString())[0]
+                                    .GetCustomAttributes(typeof(InfoAttribute), false)
+                                    .Cast<InfoAttribute>()
+                                    .ToDictionary(
+                                        attr => attr.Key,
+                                        attr => attr.Value
+                                    )
+                             });
+        return BaseResult.Success(enumValues);
+    }).WithTags("Enums");
+}
 
 app.Run();

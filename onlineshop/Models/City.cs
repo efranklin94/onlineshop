@@ -1,4 +1,7 @@
-﻿namespace onlineshop.Models
+﻿using onlineshop.Attributes;
+using onlineshop.Enums;
+
+namespace onlineshop.Models
 {
     public class City
     {
@@ -7,5 +10,7 @@
 
         public int CountryId { get; set; }
         public Country Country { get; set; }
+
+        public CitiesType Type { get; set; }
     }
 }
