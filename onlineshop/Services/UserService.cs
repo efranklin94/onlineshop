@@ -5,12 +5,13 @@ using onlineshop.Exceptions;
 using onlineshop.Features;
 using onlineshop.Helpers;
 using onlineshop.Models;
+using onlineshop.Proxies;
 using onlineshop.Specifications;
 using onlineshop.ViewModels;
 
 namespace onlineshop.Service
 {
-    public class UserService(IUnitOfWork unitOfWork, IMemoryCache memoryCache) : IUserService
+    public class UserService(IUnitOfWork unitOfWork, IMemoryCache memoryCache, ITrackingCodeProxy trackingCodeProxy) : IUserService
     {
         private const string UserListCachePrefix = "UserList_";
 
@@ -18,7 +19,9 @@ namespace onlineshop.Service
 
         public async Task CreateAsync(CreateOrUpdateUserDTO user, CancellationToken cancellationToken)
         {
-            var userEntity = MyUser.Create(user.FirstName, user.LastName, user.PhoneNumber, user.Email);
+            var code = await trackingCodeProxy.Get(cancellationToken);
+
+            var userEntity = MyUser.Create(user.FirstName, user.LastName, user.PhoneNumber, user.Email, code);
 
             await unitOfWork.UserRepository.AddAsync(userEntity, cancellationToken);
             await unitOfWork.CommitAsync(cancellationToken);

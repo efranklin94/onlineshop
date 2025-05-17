@@ -28,7 +28,8 @@ public static class MapperHelper
             FirstName = x.FirstName,
             LastName = x.LastName,
             FullName = $"{x.FirstName} {x.LastName}",
-            PhoneNumber = x.PhoneNumber
+            PhoneNumber = x.PhoneNumber,
+            TrackingCode = x.TrackingCode
         }).ToList();
 
         return viewModels;

@@ -8,8 +8,9 @@ public class MyUser
     public string PhoneNumber { get; private set; } = string.Empty;
     public bool IsActive { get; set; }
     public string? Email { get; set; }
+    public string TrackingCode { get; private set; } = string.Empty;
 
-    private MyUser(string firstName, string lastName, string phoneNumber, string? email)
+    private MyUser(string firstName, string lastName, string phoneNumber, string? email, string trackingCode)
     {
         SetFirstName(firstName);
         SetLastName(lastName);
@@ -18,9 +19,9 @@ public class MyUser
         SetEmail(email!);
     }
 
-    public static MyUser Create(string firstName, string lastName, string phoneNumber, string email)
+    public static MyUser Create(string firstName, string lastName, string phoneNumber, string email, string trackingCode)
     {
-        return new MyUser(firstName, lastName, phoneNumber, email);
+        return new MyUser(firstName, lastName, phoneNumber, email, trackingCode);
     }
 
     public void Update(string firstName, string lastName,string phoneNumber)
@@ -61,5 +62,9 @@ public class MyUser
     private void SetEmail(string? email)
     {
         Email = email;
+    }
+    public void SetTrackingCode(string trackingCode)
+    {
+        TrackingCode = trackingCode;
     }
 }

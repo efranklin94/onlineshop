@@ -1,9 +1,11 @@
 using Humanizer;
 using Microsoft.EntityFrameworkCore;
+using onlineshop;
 using onlineshop.Attributes;
 using onlineshop.Data;
 using onlineshop.Features;
 using onlineshop.Middlewares;
+using onlineshop.Proxies;
 using onlineshop.Repositories;
 using onlineshop.Service;
 using onlineshop.ViewModels;
@@ -27,10 +29,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddScoped<ITrackingCodeProxy, TrackingCodeProxy>();
+
 builder.Services.AddMediatR(options =>
 {
     options.RegisterServicesFromAssemblies(typeof(Program).Assembly);
 });
+
+builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
 
 var app = builder.Build();
 
