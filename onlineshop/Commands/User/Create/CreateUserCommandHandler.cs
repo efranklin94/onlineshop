@@ -9,13 +9,6 @@ public class CreateUserCommandHandler(IUserService service) : IRequestHandler<Cr
 {
     public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var validator = new CreateUserCommandValidator();
-        var result = validator.Validate(request);
-        if (!result.IsValid)
-        {
-            throw new BadRequestException(string.Join(',', result.Errors));
-        }
-
         await service.CreateAsync(request.User, cancellationToken);
     }
 }

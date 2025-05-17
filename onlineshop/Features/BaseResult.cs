@@ -4,11 +4,12 @@
     {
         public bool IsSuccess { get; private set; }
         public string Message { get; private set; } = string.Empty;
+        public Dictionary<string, string[]> ValidationErrors = [];
 
-        public static BaseResult Fail(string message)
+        public static BaseResult Fail(string message, Dictionary<string, string[]> validationErrors)
         {
             var result = new BaseResult();
-            result.Error(message);
+            result.Error(message, validationErrors);
 
             return result;
         }
@@ -31,10 +32,11 @@
             return result;
         }
 
-        private void Error(string message)
+        private void Error(string message, Dictionary<string, string[]> validationErrors)
         {
             IsSuccess = false;
             Message = message;
+            ValidationErrors = validationErrors;
         }
 
         private void Ok(string message)

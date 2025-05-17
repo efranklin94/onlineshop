@@ -1,7 +1,9 @@
 using Humanizer;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using onlineshop;
 using onlineshop.Attributes;
+using onlineshop.Behaviours;
 using onlineshop.Data;
 using onlineshop.Features;
 using onlineshop.Middlewares;
@@ -34,6 +36,7 @@ builder.Services.AddScoped<ITrackingCodeProxy, TrackingCodeProxy>();
 builder.Services.AddMediatR(options =>
 {
     options.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+    options.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 });
 
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
