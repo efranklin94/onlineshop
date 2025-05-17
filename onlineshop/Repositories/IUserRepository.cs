@@ -1,5 +1,6 @@
 ﻿using onlineshop.Features;
 using onlineshop.Models;
+using onlineshop.ViewModels;
 
 namespace onlineshop.Repositories;
 

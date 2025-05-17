@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using onlineshop.Commands.User.Create;
+using onlineshop.Commands.User.Delete;
 using onlineshop.DTOs;
 using onlineshop.Features;
 using onlineshop.Service;
@@ -47,7 +48,8 @@ namespace onlineshop.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
         {
-            await userService.DeleteAsync(id, cancellationToken);
+            var command = new DeleteUserCommand(id);
+            await mediator.Send(command, cancellationToken);
 
             return Ok(BaseResult.Success());
         }

@@ -3,6 +3,7 @@ using onlineshop.Data;
 using onlineshop.DTOs;
 using onlineshop.Exceptions;
 using onlineshop.Features;
+using onlineshop.Helpers;
 using onlineshop.Models;
 using onlineshop.Specifications;
 using onlineshop.ViewModels;
@@ -51,7 +52,7 @@ namespace onlineshop.Service
             DeleteUserListCache();
         }
 
-        public async Task<MyUser> GetByIdAsync(int id, CancellationToken cancellationToken)
+        public async Task<UserViewModel> GetByIdAsync(int id, CancellationToken cancellationToken)
         {
             var userEntity = memoryCache.Get<MyUser>(id);
 
@@ -63,14 +64,14 @@ namespace onlineshop.Service
                 memoryCache.Set(id, userEntity, DateTime.Now.AddSeconds(5));
             }
 
-            return userEntity;
+            return userEntity.ToViewModel();
         }
 
-        public async Task<PaginationResult<MyUser>> GetListAsync(string? query, OrderType? orderType, int? pageSize, int? pageNumber, CancellationToken cancellationToken)
+        public async Task<PaginationResult<UserViewModel>> GetListAsync(string? query, OrderType? orderType, int? pageSize, int? pageNumber, CancellationToken cancellationToken)
         {
             var cacheKey = $"{UserListCachePrefix}{query}{orderType}";
 
-            var entities = memoryCache.Get<PaginationResult<MyUser>>(cacheKey);
+            var entities = memoryCache.Get<PaginationResult<UserViewModel>>(cacheKey);
 
             if (entities is null)
             {
@@ -78,7 +79,7 @@ namespace onlineshop.Service
 
                 var (totalCount, users) = await unitOfWork.UserRepository.GetListAsync(specification, cancellationToken);
 
-                entities = PaginationResult<MyUser>.Create(pageSize ?? 0, pageNumber ?? 0, totalCount, users);
+                entities = PaginationResult<UserViewModel>.Create(pageSize ?? 0, pageNumber ?? 0, totalCount, users.ToViewModel());
 
                 memoryCache.Set(cacheKey, entities, DateTime.Now.AddSeconds(5));
                 cacheKeys.Add(cacheKey);
@@ -110,9 +111,9 @@ namespace onlineshop.Service
             cacheKeys.Clear();
         }
 
-        private GetUsersVM UserMapToViewModel(MyUser user)
+        private UserViewModel UserMapToViewModel(MyUser user)
         {
-            return new GetUsersVM
+            return new UserViewModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,
