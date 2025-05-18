@@ -1,6 +1,5 @@
 ﻿using onlineshop.DTOs;
 using onlineshop.Features;
-using onlineshop.Models;
 using onlineshop.ViewModels;
 
 namespace onlineshop.Service;
