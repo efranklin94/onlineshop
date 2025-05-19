@@ -32,11 +32,6 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
             )
             .HasMaxLength(256);
 
-        modelBuilder.Entity<MyUser>().Property<DateTime>("CreatedAt").IsRequired();
-        modelBuilder.Entity<MyUser>().Property<DateTime?>("UpdatedAt");
-        modelBuilder.Entity<MyUser>().Property<DateTime?>("DeletedAt");
-        modelBuilder.Entity<MyUser>().Property<bool>("IsDeleted");
-
         // Only return the non-deleted items
         modelBuilder.Entity<MyUser>().HasQueryFilter(x => EF.Property<bool>(x, "IsDeleted") == false);
 
@@ -71,65 +66,5 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
             new City{ Id = 5, Name = "Paris", CountryId = 3 , Type = Enums.CitiesType.Metropolis},
         ]);
         #endregion
-    }
-
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        UpdateUpdatedAtProperty();
-        UpdateCreatedAtProperty();
-        UpdateDeletedAtAndIsDeteletedProperty();
-
-        return base.SaveChangesAsync(cancellationToken);
-    }
-
-    private void UpdateUpdatedAtProperty()
-    {
-        var entries = ChangeTracker.Entries()
-            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
-
-        foreach (var entry in entries)
-        {
-            if (entry.Metadata.FindProperty("UpdatedAt") != null)
-            {
-                entry.Property("UpdatedAt").CurrentValue = DateTime.Now;
-            }
-        }
-    }
-
-    private void UpdateCreatedAtProperty()
-    {
-        var entries = ChangeTracker.Entries()
-            .Where(e => e.State == EntityState.Added);
-
-        foreach (var entry in entries)
-        {
-            if (entry.Metadata.FindProperty("CreatedAt") != null)
-            {
-                entry.Property("CreatedAt").CurrentValue = DateTime.Now;
-            }
-        }
-    }
-
-    private void UpdateDeletedAtAndIsDeteletedProperty()
-    {
-        var entries = ChangeTracker.Entries()
-            .Where(e => e.State == EntityState.Deleted);
-
-        foreach (var entry in entries)
-        {
-            if (entry.Metadata.FindProperty("DeletedAt") != null)
-            {
-                entry.Property("DeletedAt").CurrentValue = DateTime.Now;
-            }
-
-            if (entry.Metadata.FindProperty("IsDeleted") != null)
-            {
-                entry.Property("IsDeleted").CurrentValue = true;
-
-                // prevent from deleting physically
-                entry.State = EntityState.Modified;
-            }
-
-        }
     }
 }

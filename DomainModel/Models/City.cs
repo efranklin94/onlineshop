@@ -1,11 +1,10 @@
-﻿using onlineshop.Attributes;
+﻿using DomainModel.Models;
 using onlineshop.Enums;
 
 namespace onlineshop.Models
 {
-    public class City
+    public class City : BaseModel
     {
-        public int Id { get; set; }
         public required string Name { get; set; }
 
         public int CountryId { get; set; }

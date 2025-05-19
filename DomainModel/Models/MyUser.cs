@@ -1,8 +1,9 @@
-﻿namespace onlineshop.Models;
+﻿using DomainModel.Models;
 
-public class MyUser
+namespace onlineshop.Models;
+
+public class MyUser : BaseModel
 {
-    public int Id { get; set; }
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;
     public string PhoneNumber { get; private set; } = string.Empty;
