@@ -1,3 +1,6 @@
+using DomainModel.Models.TPC;
+using DomainModel.Models.TPH;
+using DomainModel.Models.TPT;
 using Humanizer;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -104,5 +107,29 @@ foreach (var enumType in enumTypes)
         return BaseResult.Success(enumValues);
     }).WithTags("Enums");
 }
+
+app.MapPost("/tpc", async (MyDbContext db, CancellationToken cancellationToken) =>
+{
+    var shoe = new Shoe { Size = 12 };
+
+    await db.AddAsync(shoe, cancellationToken);
+    await db.SaveChangesAsync(cancellationToken);
+});
+
+app.MapPost("/tph", async (MyDbContext db, CancellationToken cancellationToken) =>
+{
+    var gold = new Gold { Karat = 24 };
+
+    await db.AddAsync(gold, cancellationToken);
+    await db.SaveChangesAsync(cancellationToken);
+});
+
+app.MapPost("/tpt", async (MyDbContext db, CancellationToken cancellationToken) =>
+{
+    var cellphpne = new CellPhone { Model = "Nokia-6600" };
+
+    await db.AddAsync(cellphpne, cancellationToken);
+    await db.SaveChangesAsync(cancellationToken);
+});
 
 app.Run();

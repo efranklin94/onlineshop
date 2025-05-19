@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DomainModel.Models;
+using DomainModel.Models.TPC;
+using DomainModel.Models.TPH;
+using DomainModel.Models.TPT;
+using Microsoft.EntityFrameworkCore;
 using onlineshop.Helpers;
 using onlineshop.Models;
 
@@ -40,7 +44,6 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
         modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
 
 
-        base.OnModelCreating(modelBuilder);
         #endregion
 
         #region City & Country
@@ -66,5 +69,21 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
             new City{ Id = 5, Name = "Paris", CountryId = 3 , Type = Enums.CitiesType.Metropolis},
         ]);
         #endregion
+
+        #region Shoe
+        modelBuilder.Entity<Shoe>().UseTpcMappingStrategy();
+        #endregion
+
+        #region Gold
+        modelBuilder.Entity<Product2>().UseTphMappingStrategy();
+        modelBuilder.Entity<Gold>();
+        #endregion
+
+        #region CellPhone
+        modelBuilder.Entity<Product3>().UseTptMappingStrategy();
+        modelBuilder.Entity<CellPhone>();
+        #endregion
+
+        base.OnModelCreating(modelBuilder);
     }
 }
