@@ -110,7 +110,7 @@ foreach (var enumType in enumTypes)
 
 app.MapPost("/tpc", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
-    var shoe = new Shoe { Size = 12 };
+    var shoe = new Shoe { Size = 12, Name = "shima", Price = 23000 };
 
     await db.AddAsync(shoe, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);
@@ -118,7 +118,7 @@ app.MapPost("/tpc", async (MyDbContext db, CancellationToken cancellationToken) 
 
 app.MapPost("/tph", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
-    var gold = new Gold { Karat = 24 };
+    var gold = new Gold { Karat = 24 , Name = "parsian24", Price=30000000 };
 
     await db.AddAsync(gold, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);
@@ -126,7 +126,7 @@ app.MapPost("/tph", async (MyDbContext db, CancellationToken cancellationToken) 
 
 app.MapPost("/tpt", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
-    var cellphpne = new CellPhone { Model = "Nokia-6600" };
+    var cellphpne = new CellPhone { Model = "Nokia", Name = "6600", Price=2000 };
 
     await db.AddAsync(cellphpne, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);

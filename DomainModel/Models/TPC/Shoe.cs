@@ -1,6 +1,6 @@
 ﻿namespace DomainModel.Models.TPC;
 
-public class Shoe : BaseModel
+public class Shoe : Product1
 {
     public int Size { get; set; }
 }
