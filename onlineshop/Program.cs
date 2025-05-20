@@ -111,24 +111,37 @@ foreach (var enumType in enumTypes)
 app.MapPost("/tpc", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
     var shoe = new Shoe { Size = 12, Name = "shima", Price = 23000 };
+    var shoe2 = new Shoe { Size = 13, Name = "melli", Price = 22000 };
+    var shoe3 = new Shoe { Size = 11, Name = "Nike", Price = 50000 };
 
     await db.AddAsync(shoe, cancellationToken);
+    await db.AddAsync(shoe2, cancellationToken);
+    await db.AddAsync(shoe3, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);
 });
 
 app.MapPost("/tph", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
     var gold = new Gold { Karat = 24 , Name = "parsian24", Price=30000000 };
+    var gold2 = new Gold { Karat = 24, Name = "parsian18", Price = 20000000 };
+    var gold3 = new Gold { Karat = 24, Name = "parsian19", Price = 10000000 };
+
 
     await db.AddAsync(gold, cancellationToken);
+    await db.AddAsync(gold2, cancellationToken);
+    await db.AddAsync(gold3, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);
 });
 
 app.MapPost("/tpt", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
     var cellphpne = new CellPhone { Model = "Nokia", Name = "6600", Price=2000 };
+    var cellphpne2 = new CellPhone { Model = "sony", Name = "a55", Price = 2000 };
+    var cellphpne3 = new CellPhone { Model = "samsung", Name = "a66", Price = 2000 };
 
     await db.AddAsync(cellphpne, cancellationToken);
+    await db.AddAsync(cellphpne2, cancellationToken);
+    await db.AddAsync(cellphpne3, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);
 });
 
