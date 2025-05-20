@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TrackingCode.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,15 +19,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/TrackingCode/{prefix}", ([FromRoute] string prefix) =>
+app.MapGet("/TrackingCode/{prefix}/{count}", ([FromRoute] string prefix, [FromRoute] int count = 1) =>
 {
-    return $"{prefix}-{Random.Shared.Next(10000, 99999)}";
+    var trackingCodes = Enumerable.Range(0, count)
+        .Select(_ => $"{prefix}-{Random.Shared.Next(10000, 99999)}")
+        .ToList();
+
+    var result = new GetViewModel { TrackingCodes = trackingCodes };
+
+    return result;
 })
 .WithName("TrackingCode");
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
