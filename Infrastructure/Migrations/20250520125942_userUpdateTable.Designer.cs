@@ -12,7 +12,7 @@ using onlineshop.Data;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250520124235_userUpdateTable")]
+    [Migration("20250520125942_userUpdateTable")]
     partial class userUpdateTable
     {
         /// <inheritdoc />

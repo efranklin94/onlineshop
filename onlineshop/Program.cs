@@ -49,8 +49,9 @@ builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"
 
 // Hangfire
 builder.Services.AddTransient<UsersTrackingCodeJob>();
+var sqlConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddHangfire(config =>
-    config.UseMemoryStorage()
+    config.UseSqlServerStorage(sqlConnectionString)
 );
 builder.Services.AddHangfireServer();
 
@@ -162,7 +163,7 @@ RecurringJob.AddOrUpdate<UsersTrackingCodeJob>(
     "get-users-tracking-code-job",
     job => job.Get(),
     //"*/30 * * * * *"
-    Cron.Daily(1)
+    Cron.Minutely()
     );
 
 app.Run();
