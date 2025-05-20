@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Inherit : Migration
+    public partial class userUpdateTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -194,6 +194,12 @@ namespace Infrastructure.Migrations
                 column: "Email",
                 unique: true,
                 filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MyUser_TrackingCodes",
+                table: "Users",
+                column: "TrackingCode",
+                unique: true);
         }
 
         /// <inheritdoc />

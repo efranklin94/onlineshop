@@ -11,7 +11,7 @@ public class MyUser : BaseModel
     public string? Email { get; set; }
     public string TrackingCode { get; private set; } = string.Empty;
 
-    private MyUser(string firstName, string lastName, string phoneNumber, string? email, string trackingCode)
+    private MyUser(string firstName, string lastName, string phoneNumber, string? email)
     {
         SetFirstName(firstName);
         SetLastName(lastName);
@@ -20,9 +20,9 @@ public class MyUser : BaseModel
         SetEmail(email!);
     }
 
-    public static MyUser Create(string firstName, string lastName, string phoneNumber, string email, string trackingCode)
+    public static MyUser Create(string firstName, string lastName, string phoneNumber, string email)
     {
-        return new MyUser(firstName, lastName, phoneNumber, email, trackingCode);
+        return new MyUser(firstName, lastName, phoneNumber, email);
     }
 
     public void Update(string firstName, string lastName,string phoneNumber)

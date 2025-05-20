@@ -40,6 +40,7 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
         modelBuilder.Entity<MyUser>().HasQueryFilter(x => EF.Property<bool>(x, "IsDeleted") == false);
 
         modelBuilder.Entity<MyUser>().Property(x => x.TrackingCode).HasMaxLength(10);
+        modelBuilder.Entity<MyUser>().HasIndex(u => u.TrackingCode).IsUnique().HasDatabaseName("IX_MyUser_TrackingCodes");
 
         modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
 

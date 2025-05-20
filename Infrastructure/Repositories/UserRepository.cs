@@ -21,6 +21,11 @@ public class UserRepository(MyDbContext db) : IUserRepository
         set.Update(user);
     }
 
+    public void Update(List<MyUser> users)
+    {
+        set.UpdateRange(users);
+    }
+
     public void Delete(MyUser user)
     {
         set.Remove(user);

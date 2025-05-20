@@ -1,6 +1,9 @@
+using Application.Jobs;
 using DomainModel.Models.TPC;
 using DomainModel.Models.TPH;
 using DomainModel.Models.TPT;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Humanizer;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +46,14 @@ builder.Services.AddMediatR(options =>
 });
 
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
+
+// Hangfire
+builder.Services.AddTransient<UsersTrackingCodeJob>();
+builder.Services.AddHangfire(config =>
+    config.UseMemoryStorage()
+);
+builder.Services.AddHangfireServer();
+
 
 var app = builder.Build();
 
@@ -144,5 +155,14 @@ app.MapPost("/tpt", async (MyDbContext db, CancellationToken cancellationToken) 
     await db.AddAsync(cellphpne3, cancellationToken);
     await db.SaveChangesAsync(cancellationToken);
 });
+
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<UsersTrackingCodeJob>(
+    "get-users-tracking-code-job",
+    job => job.Get(),
+    //"*/30 * * * * *"
+    Cron.Daily(1)
+    );
 
 app.Run();

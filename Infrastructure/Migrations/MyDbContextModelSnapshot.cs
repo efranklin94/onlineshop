@@ -330,6 +330,10 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("IX_MyUser_Email")
                         .HasFilter("[Email] IS NOT NULL");
 
+                    b.HasIndex("TrackingCode")
+                        .IsUnique()
+                        .HasDatabaseName("IX_MyUser_TrackingCodes");
+
                     b.ToTable("Users");
                 });
 

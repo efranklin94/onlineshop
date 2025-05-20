@@ -12,8 +12,8 @@ using onlineshop.Data;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20250519110122_Inherit")]
-    partial class Inherit
+    [Migration("20250520124235_userUpdateTable")]
+    partial class userUpdateTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -332,6 +332,10 @@ namespace Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_MyUser_Email")
                         .HasFilter("[Email] IS NOT NULL");
+
+                    b.HasIndex("TrackingCode")
+                        .IsUnique()
+                        .HasDatabaseName("IX_MyUser_TrackingCodes");
 
                     b.ToTable("Users");
                 });
