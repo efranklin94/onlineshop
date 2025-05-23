@@ -44,6 +44,26 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
 
         modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
 
+        #region Usertag & Useroption
+        modelBuilder.Entity<MyUser>()
+            .HasMany(x => x.userOptions)
+            .WithOne()
+            .HasForeignKey("MyUserId").IsRequired().IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserOption>().HasKey(x => x.Id);
+        modelBuilder.Entity<UserOption>().Property(x => x.Description).HasMaxLength(50);
+        modelBuilder.Entity<UserOption>().ToTable("UserOptions");
+
+        modelBuilder.Entity<MyUser>()
+            .OwnsMany(x => x.userTags, tag => {
+                tag.WithOwner().HasForeignKey("MyUserId");
+                tag.Property(x => x.Title).HasMaxLength(20);
+                tag.Property(x => x.Priority).IsRequired();
+                tag.HasKey("MyUserId", "Title", "Priority");
+                tag.ToTable("UserTags");
+            });
+        #endregion
 
         #endregion
 

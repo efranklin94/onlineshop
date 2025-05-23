@@ -11,6 +11,9 @@ public class MyUser : BaseModel
     public string? Email { get; set; }
     public string TrackingCode { get; private set; } = string.Empty;
 
+    public List<UserOption> userOptions { get; set; } = [];
+    public List<UserTag> userTags { get; set; } = [];
+
     private MyUser(string firstName, string lastName, string phoneNumber, string? email)
     {
         SetFirstName(firstName);
@@ -67,5 +70,31 @@ public class MyUser : BaseModel
     public void SetTrackingCode(string trackingCode)
     {
         TrackingCode = trackingCode;
+    }
+    public void AddOption(string description)
+    {
+        var option = UserOption.Create(description);
+        userOptions.Add(option);
+    }
+
+    public void RemoveOption(Guid optionId)
+    {
+        var option = userOptions.FirstOrDefault(x => x.Id == optionId);
+        if (option != null)
+        {
+            userOptions.Remove(option);
+        }
+    }
+
+    public void AddTag(string title, int priority)
+    {
+        var tag = UserTag.Create(title, priority);
+        userTags.Add(tag);
+    }
+
+    public void RemoveTag(string title, int priority)
+    {
+        var tag = UserTag.Create(title, priority);
+        userTags.Remove(tag);
     }
 }
