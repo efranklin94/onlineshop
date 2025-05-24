@@ -3,7 +3,6 @@ using onlineshop.Data;
 using onlineshop.Features;
 using onlineshop.Helpers;
 using onlineshop.Models;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace onlineshop.Repositories;
 
@@ -33,7 +32,10 @@ public class UserRepository(MyDbContext db) : IUserRepository
 
     public async Task<MyUser?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await set.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        return await set
+            .Include(x => x.userOptions)
+            .Include(x => x.userTags)
+            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
     public async Task<(int, List<MyUser>)> GetListAsync(BaseSpecification<MyUser> specification, CancellationToken cancellationToken)

@@ -1,3 +1,4 @@
+using API.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using onlineshop.Commands.User.Create;
@@ -58,6 +59,42 @@ namespace onlineshop.Controllers
         public async Task<IActionResult> ToggleActivation([FromRoute] int id, CancellationToken cancellationToken)
         {
             await userService.ToggleActivationAsync(id, cancellationToken);
+
+            return Ok(BaseResult.Success());
+        }
+
+        [HttpPost("{id:int}/Options")]
+        public async Task<IActionResult> CreateOption([FromRoute] int id, [FromBody] CreateUserOptionDTO input, CancellationToken cancellationToken)
+        {
+            var command = new CreateUserOptionCommand(id, input.Description);
+            await mediator.Send(command, cancellationToken);
+
+            return Ok(BaseResult.Success());
+        }
+
+        [HttpDelete("{id:int}/Options/{optionId:guid}")]
+        public async Task<IActionResult> DeleteOption([FromRoute] int id, [FromRoute] Guid optionId, CancellationToken cancellationToken)
+        {
+            var command = new DeleteUserOptionCommand(id, optionId);
+            await mediator.Send(command, cancellationToken);
+
+            return Ok(BaseResult.Success());
+        }
+
+        [HttpPost("{id:int}/Tags")]
+        public async Task<IActionResult> CreateTag([FromRoute] int id, [FromBody] CreateUserTagDTO input, CancellationToken cancellationToken)
+        {
+            var command = new CreateUserTagCommand(id, input.Title, input.Priority);
+            await mediator.Send(command, cancellationToken);
+
+            return Ok(BaseResult.Success());
+        }
+
+        [HttpDelete("{id:int}/Tags")]
+        public async Task<IActionResult> DeleteTag([FromRoute] int id, [FromQuery] string title, [FromQuery] int priority, CancellationToken cancellationToken)
+        {
+            var command = new DeleteUserTagCommand(id, title, priority);
+            await mediator.Send(command, cancellationToken);
 
             return Ok(BaseResult.Success());
         }
