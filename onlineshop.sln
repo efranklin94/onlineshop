@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainService", "DomainServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{63CA01D3-9F3A-4604-9484-6A0A21F2DAA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{FD91D5B7-D76E-4136-957D-11BF2F305E39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{63CA01D3-9F3A-4604-9484-6A0A21F2DAA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63CA01D3-9F3A-4604-9484-6A0A21F2DAA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63CA01D3-9F3A-4604-9484-6A0A21F2DAA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD91D5B7-D76E-4136-957D-11BF2F305E39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD91D5B7-D76E-4136-957D-11BF2F305E39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD91D5B7-D76E-4136-957D-11BF2F305E39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD91D5B7-D76E-4136-957D-11BF2F305E39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

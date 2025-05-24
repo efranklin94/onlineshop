@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Resources;
 
 namespace Application.Commands.UserTag.Create;
 
@@ -8,6 +9,6 @@ public class CreateUserTagCommandValidator : AbstractValidator<CreateUserTagComm
     {
         RuleFor(x => x.Title)
             .NotNull().NotEmpty()
-            .WithMessage(string.Format(Messages.Required, nameof(DomainModel.Models.UserTag.Title)));
+            .WithMessage(string.Format(Messages.IsRequired, nameof(DomainModel.Models.UserTag.Title)));
     }
 }

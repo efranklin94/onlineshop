@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Resources;
 
 namespace Application.Commands.UserOption.Create;
 
@@ -8,6 +9,6 @@ public class CreateUserOptionCommandValidator : AbstractValidator<CreateUserOpti
     {
         RuleFor(x => x.Description)
             .NotNull().NotEmpty()
-            .WithMessage(string.Format(Messages.Required, nameof(DomainModel.Models.UserOption.Description)));
+            .WithMessage(string.Format(Messages.IsRequired, nameof(DomainModel.Models.UserOption.Description)));
     }
 }
