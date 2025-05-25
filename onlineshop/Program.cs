@@ -2,6 +2,7 @@ using Application.Jobs;
 using DomainModel.Models.TPC;
 using DomainModel.Models.TPH;
 using DomainModel.Models.TPT;
+using FluentValidation;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Humanizer;
@@ -41,9 +42,10 @@ builder.Services.AddScoped<ITrackingCodeProxy, TrackingCodeProxy>();
 
 builder.Services.AddMediatR(options =>
 {
-    options.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+    options.RegisterServicesFromAssemblies(typeof(ValidationBehaviour<,>).Assembly);
     options.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 });
+builder.Services.AddValidatorsFromAssembly(typeof(ValidationBehaviour<,>).Assembly);
 
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("Settings"));
 
