@@ -9,7 +9,7 @@ public class MyUser : BaseModel
     public string PhoneNumber { get; private set; } = string.Empty;
     public bool IsActive { get; set; }
     public string? Email { get; set; }
-    public string TrackingCode { get; private set; } = string.Empty;
+    public string TrackingCode { get; set; }
 
     public List<UserOption> userOptions { get; set; } = [];
     public List<UserTag> userTags { get; set; } = [];

@@ -1,6 +1,4 @@
 ﻿using MediatR;
-using onlineshop.DTOs;
-using onlineshop.Exceptions;
 using onlineshop.Service;
 
 namespace onlineshop.Commands.User.Create;

@@ -12,6 +12,7 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<MyUser> Users { get; set; }
     public DbSet<City> Cities { get; set; }
+    public DbSet<BackOfficeUser> BackOfficeUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,7 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
         modelBuilder.Entity<MyUser>().HasIndex(u => u.TrackingCode).IsUnique().HasDatabaseName("IX_MyUser_TrackingCodes");
 
         modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
+        #endregion
 
         #region Usertag & Useroption
         modelBuilder.Entity<MyUser>()
@@ -64,6 +66,19 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
                 tag.ToTable("UserTags");
             });
         #endregion
+
+        #region BackOfficeUser
+
+        modelBuilder.Entity<BackOfficeUser>().HasKey(x => x.Id);
+
+        modelBuilder.Entity<BackOfficeUser>().Property(x => x.Username).HasMaxLength(50);
+        modelBuilder.Entity<BackOfficeUser>().Property(x => x.Password).HasMaxLength(1000);
+
+        modelBuilder.Entity<BackOfficeUser>().HasData([
+                new BackOfficeUser{ Id = 1, Username = "Edris", Password = "123"}
+            ]);
+
+        modelBuilder.Entity<BackOfficeUser>().ToTable("BackOfficeUsers", "bo");
 
         #endregion
 

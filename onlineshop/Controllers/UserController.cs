@@ -4,6 +4,7 @@ using Application.Commands.UserOption.Delete;
 using Application.Commands.UserTag.Create;
 using Application.Commands.UserTag.Delete;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using onlineshop.Commands.User.Create;
 using onlineshop.Commands.User.Delete;
@@ -15,6 +16,7 @@ namespace onlineshop.Controllers
 {
     [ApiController]
     [Route("Users")]
+    [Authorize]
     public class UserController(IUserService userService, IMediator mediator) : ControllerBase
     {
         [HttpPost]

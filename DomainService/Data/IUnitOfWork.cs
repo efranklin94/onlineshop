@@ -1,4 +1,5 @@
-﻿using onlineshop.Repositories;
+﻿using DomainService.Repositories;
+using onlineshop.Repositories;
 
 namespace onlineshop.Data
 {
@@ -7,5 +8,6 @@ namespace onlineshop.Data
         public Task<bool> CommitAsync(CancellationToken cancellationToken);
 
         public IUserRepository UserRepository { get; init; }
+        public IBackOfficeUserRepository BackOfficeUserRepository { get; init; }
     }
 }
