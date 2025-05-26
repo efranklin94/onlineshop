@@ -33,8 +33,8 @@ public class UserRepository(MyDbContext db) : IUserRepository
     public async Task<MyUser?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await set
-            .Include(x => x.userOptions)
-            .Include(x => x.userTags)
+            //.Include(x => x.userOptions)
+            //.Include(x => x.userTags)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 

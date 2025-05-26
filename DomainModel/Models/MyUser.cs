@@ -11,8 +11,8 @@ public class MyUser : BaseModel
     public string? Email { get; set; }
     public string TrackingCode { get; set; }
 
-    public List<UserOption> userOptions { get; set; } = [];
-    public List<UserTag> userTags { get; set; } = [];
+    public virtual ICollection<UserOption> userOptions { get; set; } = [];
+    public virtual ICollection<UserTag> userTags { get; set; } = [];
 
     private MyUser(string firstName, string lastName, string phoneNumber, string? email)
     {
