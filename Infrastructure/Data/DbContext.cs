@@ -48,23 +48,15 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
 
         #region Usertag & Useroption
         modelBuilder.Entity<MyUser>()
-            .HasMany(x => x.userOptions)
-            .WithOne()
-            .HasForeignKey("MyUserId").IsRequired().IsRequired()
+            .HasMany(u => u.UserTags)
+            .WithOne()                        // no navigation back
+            .HasForeignKey("MyUserId")        // shadow FK column
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<UserOption>().HasKey(x => x.Id);
-        modelBuilder.Entity<UserOption>().Property(x => x.Description).HasMaxLength(50);
-        modelBuilder.Entity<UserOption>().ToTable("UserOptions");
+        modelBuilder.Entity<UserTag>()
+            .HasKey(t => t.Id);               // primary key
 
-        modelBuilder.Entity<MyUser>()
-            .OwnsMany(x => x.userTags, tag => {
-                tag.WithOwner().HasForeignKey("MyUserId");
-                tag.Property(x => x.Title).HasMaxLength(20);
-                tag.Property(x => x.Priority).IsRequired();
-                tag.HasKey("MyUserId", "Title", "Priority");
-                tag.ToTable("UserTags");
-            });
         #endregion
 
         #region BackOfficeUser

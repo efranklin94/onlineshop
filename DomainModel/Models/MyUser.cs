@@ -1,4 +1,5 @@
 ﻿using DomainModel.Models;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace onlineshop.Models;
 
@@ -11,8 +12,10 @@ public class MyUser : BaseModel
     public string? Email { get; set; }
     public string TrackingCode { get; set; }
 
-    public virtual ICollection<UserOption> userOptions { get; set; } = [];
-    public virtual ICollection<UserTag> userTags { get; set; } = [];
+    private ICollection<UserOption>? userOptions;
+    private ICollection<UserTag>? userTags;
+
+    private readonly ILazyLoader lazyLoader;
 
     private MyUser(string firstName, string lastName, string phoneNumber, string? email)
     {
@@ -21,6 +24,24 @@ public class MyUser : BaseModel
         SetPhoneNumber(phoneNumber);
         SetIsActive(true);
         SetEmail(email!);
+    }
+    
+    public MyUser(ILazyLoader lazyLoader)
+    {
+        this.lazyLoader = lazyLoader;
+    }
+    public MyUser() { }
+
+    public ICollection<UserOption> UserOptions
+    {
+        get => lazyLoader.Load(this, ref userOptions)!;
+        set => userOptions = value;
+    }
+
+    public ICollection<UserTag> UserTags
+    {
+        get => lazyLoader.Load(this, ref userTags)!;
+        set => userTags = value;
     }
 
     public static MyUser Create(string firstName, string lastName, string phoneNumber, string email)

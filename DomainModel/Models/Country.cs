@@ -7,5 +7,5 @@ public class Country : BaseModel
 {
     public string Name { get; set; } = string.Empty;
     [JsonIgnore]
-    public ICollection<City> Cities { get; set; } = new List<City>();
+    public virtual ICollection<City> Cities { get; set; } = new List<City>();
 }

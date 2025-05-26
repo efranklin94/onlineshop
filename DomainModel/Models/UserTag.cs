@@ -2,6 +2,7 @@
 
 public class UserTag
 {
+    public Guid Id { get; set; }      // ← new
     public string Title { get; set; } = string.Empty;
     public int Priority { get; set; }
 
