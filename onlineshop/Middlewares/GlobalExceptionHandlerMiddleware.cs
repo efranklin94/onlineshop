@@ -1,4 +1,5 @@
-﻿using onlineshop.Exceptions;
+﻿using Application.Exceptions;
+using onlineshop.Exceptions;
 using onlineshop.Features;
 using System.Text.Json;
 namespace onlineshop.Middlewares;
@@ -18,6 +19,14 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next)
         catch (NotFoundException ex)
         {
             await SetContext(context, ex.Message, [], StatusCodes.Status404NotFound);
+        }
+        catch (UnauthorizedException ex)
+        {
+            await SetContext(context, ex.Message, [], StatusCodes.Status401Unauthorized);
+        }
+        catch (ForbiddenException ex)
+        {
+            await SetContext(context, ex.Message, [], StatusCodes.Status403Forbidden);
         }
         catch (TooManyRequestException ex)
         {

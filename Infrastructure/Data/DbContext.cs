@@ -29,6 +29,11 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
         modelBuilder.Entity<MyUser>().Property(x => x.FirstName).HasMaxLength(50);
         modelBuilder.Entity<MyUser>().Property(x => x.LastName).HasMaxLength(50);
 
+        modelBuilder.Entity<MyUser>().Property(x => x.CreatedBy).HasMaxLength(50);
+        modelBuilder.Entity<MyUser>().Property(x => x.UpdatedBy).HasMaxLength(50);
+        modelBuilder.Entity<MyUser>().Property(x => x.DeletedBy).HasMaxLength(50);
+
+
         modelBuilder.Entity<MyUser>()
             .Property(x => x.PhoneNumber)
             .HasConversion(
@@ -39,9 +44,6 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
 
         // Only return the non-deleted items
         modelBuilder.Entity<MyUser>().HasQueryFilter(x => EF.Property<bool>(x, "IsDeleted") == false);
-
-        modelBuilder.Entity<MyUser>().Property(x => x.TrackingCode).HasMaxLength(10);
-        modelBuilder.Entity<MyUser>().HasIndex(u => u.TrackingCode).IsUnique().HasDatabaseName("IX_MyUser_TrackingCodes");
 
         modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
         #endregion

@@ -16,10 +16,10 @@ namespace onlineshop.Controllers
 {
     [ApiController]
     [Route("Users")]
-    [Authorize]
     public class UserController(IUserService userService, IMediator mediator) : ControllerBase
     {
         [HttpPost]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> Create([FromBody] CreateOrUpdateUserDTO input, CancellationToken cancellationToken)
         {
             var command = new CreateUserCommand(input);
@@ -45,6 +45,7 @@ namespace onlineshop.Controllers
         }
 
         [HttpPut("{id:int}")]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] CreateOrUpdateUserDTO input, CancellationToken cancellationToken)
         {
             await userService.UpdateAsync(id, input, cancellationToken);
@@ -53,6 +54,7 @@ namespace onlineshop.Controllers
         }
 
         [HttpDelete("{id:int}")]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
         {
             var command = new DeleteUserCommand(id);
@@ -62,6 +64,7 @@ namespace onlineshop.Controllers
         }
 
         [HttpPut("{id:int}/ToggleActivation")]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> ToggleActivation([FromRoute] int id, CancellationToken cancellationToken)
         {
             await userService.ToggleActivationAsync(id, cancellationToken);
@@ -70,6 +73,7 @@ namespace onlineshop.Controllers
         }
 
         [HttpPost("{id:int}/Options")]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> CreateOption([FromRoute] int id, [FromBody] CreateUserOptionDTO input, CancellationToken cancellationToken)
         {
             var command = new CreateUserOptionCommand(id, input.Description);
@@ -79,6 +83,7 @@ namespace onlineshop.Controllers
         }
 
         [HttpDelete("{id:int}/Options/{optionId:guid}")]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> DeleteOption([FromRoute] int id, [FromRoute] Guid optionId, CancellationToken cancellationToken)
         {
             var command = new DeleteUserOptionCommand(id, optionId);
@@ -88,6 +93,7 @@ namespace onlineshop.Controllers
         }
 
         [HttpPost("{id:int}/Tags")]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> CreateTag([FromRoute] int id, [FromBody] CreateUserTagDTO input, CancellationToken cancellationToken)
         {
             var command = new CreateUserTagCommand(id, input.Title, input.Priority);
@@ -97,6 +103,7 @@ namespace onlineshop.Controllers
         }
 
         [HttpDelete("{id:int}/Tags")]
+        [Authorize(Policy = "UserModifyPolicy")]
         public async Task<IActionResult> DeleteTag([FromRoute] int id, [FromQuery] string title, [FromQuery] int priority, CancellationToken cancellationToken)
         {
             var command = new DeleteUserTagCommand(id, title, priority);

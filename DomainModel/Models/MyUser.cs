@@ -2,7 +2,7 @@
 
 namespace onlineshop.Models;
 
-public class MyUser : BaseModel
+public class MyUser : TrackableEntity
 {
     public string FirstName { get; private set; } = string.Empty;
     public string LastName { get; private set; } = string.Empty;

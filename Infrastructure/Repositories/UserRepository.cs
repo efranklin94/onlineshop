@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DomainService;
+using Microsoft.EntityFrameworkCore;
 using onlineshop.Data;
 using onlineshop.Features;
 using onlineshop.Helpers;
@@ -6,17 +7,21 @@ using onlineshop.Models;
 
 namespace onlineshop.Repositories;
 
-public class UserRepository(MyDbContext db) : IUserRepository
+public class UserRepository(MyDbContext db, ICurrentUser currentUser) : IUserRepository
 {
     private readonly DbSet<MyUser> set = db.Set<MyUser>();
 
     public async Task AddAsync(MyUser user, CancellationToken cancellationToken)
     {
+        user.Create(currentUser.Username);
+
         await set.AddAsync(user, cancellationToken);
     }
 
     public void Update(MyUser user)
     {
+        user.Update(currentUser.Username);
+
         set.Update(user);
     }
 
@@ -27,6 +32,8 @@ public class UserRepository(MyDbContext db) : IUserRepository
 
     public void Delete(MyUser user)
     {
+        user.Delete(currentUser.Username);
+
         set.Remove(user);
     }
 

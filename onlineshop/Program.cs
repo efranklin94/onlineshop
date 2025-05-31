@@ -1,7 +1,12 @@
+using API;
+using API.Middlewares;
+using API.OperationFilters;
 using Application.Jobs;
+using DomainModel.Enums;
 using DomainModel.Models.TPC;
 using DomainModel.Models.TPH;
 using DomainModel.Models.TPT;
+using DomainService;
 using DomainService.Repositories;
 using DomainService.Services;
 using FluentValidation;
@@ -47,7 +52,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -63,23 +67,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer"
     });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                },
-                Scheme = "oauth2",
-                Name = "Bearer",
-                In = ParameterLocation.Header
-            },
-            Array.Empty<string>()
-        }
-    });
+    c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
 builder.Services.AddMemoryCache();
@@ -125,9 +113,21 @@ app.UseHttpsRedirection();
 app.UseMiddleware<IdempotencyMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
+app.UseMiddleware<HttpResponseMiddleware>();
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("UserModifyPolicy", policy =>
+    {
+        policy.RequireClaim("Permissions", PermissionType.CarModifier.ToString());
+    });
 
 app.UseAuthorization();
 app.MapControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<ICurrentUser, CurrentUser>();
 
 app.MapGet("/Cities", async (MyDbContext db, CancellationToken cancellationToken) =>
 {
