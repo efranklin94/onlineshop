@@ -1,4 +1,5 @@
 using API;
+using API.Features;
 using API.Middlewares;
 using API.OperationFilters;
 using Application.Jobs;
@@ -31,6 +32,7 @@ using onlineshop.Service;
 using onlineshop.ViewModels;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,9 +54,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().
+    AddJsonOptions(options => {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -68,6 +75,8 @@ builder.Services.AddSwaggerGen(c =>
     });
 
     c.OperationFilter<SecurityRequirementsOperationFilter>();
+
+    c.OperationFilter<AddAcceptLanguageHeaderParameter>();
 });
 
 builder.Services.AddMemoryCache();
@@ -98,6 +107,7 @@ builder.Services.AddHangfire(config =>
 );
 builder.Services.AddHangfireServer();
 
+builder.Services.AddLocalization();
 
 var app = builder.Build();
 
@@ -110,19 +120,34 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+var supportedLanguages = Enum
+    .GetValues<Languages>()
+    .Cast<Languages>()
+    .Select(x => x.ToString())
+    .ToArray();
+
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture(supportedLanguages[0])
+    .AddSupportedCultures(supportedLanguages)
+    .AddSupportedUICultures(supportedLanguages);
+
+app.UseRequestLocalization(localizationOptions);
+
+app.MapControllers();
+
 app.UseMiddleware<IdempotencyMiddleware>();
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 app.UseMiddleware<RateLimitMiddleware>();
 app.UseMiddleware<HttpResponseMiddleware>();
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("UserModifyPolicy", policy =>
-    {
-        policy.RequireClaim("Permissions", PermissionType.CarModifier.ToString());
-    });
+//builder.Services.AddAuthorizationBuilder()
+//    .AddPolicy("UserModifyPolicy", policy =>
+//    {
+//        policy.RequireClaim("Permissions", PermissionType.CarModifier.ToString());
+//    });
 
+app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 

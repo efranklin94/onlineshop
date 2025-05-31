@@ -16,73 +16,75 @@ public class MyDbContext(DbContextOptions options) : DbContext(options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        #region User 
-        modelBuilder.HasSequence<int>("UserSequence", "dbo")
-            .IncrementsBy(2);
+        //#region User 
+        //modelBuilder.HasSequence<int>("UserSequence", "dbo")
+        //    .IncrementsBy(2);
 
-        modelBuilder.Entity<MyUser>().HasKey(x => x.Id);
+        //modelBuilder.Entity<MyUser>().HasKey(x => x.Id);
 
-        modelBuilder.Entity<MyUser>()
-            .Property(x => x.Id)
-            .HasDefaultValueSql("NEXT VALUE FOR dbo.UserSequence");
+        //modelBuilder.Entity<MyUser>()
+        //    .Property(x => x.Id)
+        //    .HasDefaultValueSql("NEXT VALUE FOR dbo.UserSequence");
 
-        modelBuilder.Entity<MyUser>().Property(x => x.FirstName).HasMaxLength(50);
-        modelBuilder.Entity<MyUser>().Property(x => x.LastName).HasMaxLength(50);
+        //modelBuilder.Entity<MyUser>().Property(x => x.FirstName).HasMaxLength(50);
+        //modelBuilder.Entity<MyUser>().Property(x => x.LastName).HasMaxLength(50);
 
-        modelBuilder.Entity<MyUser>().Property(x => x.CreatedBy).HasMaxLength(50);
-        modelBuilder.Entity<MyUser>().Property(x => x.UpdatedBy).HasMaxLength(50);
-        modelBuilder.Entity<MyUser>().Property(x => x.DeletedBy).HasMaxLength(50);
+        //modelBuilder.Entity<MyUser>().Property(x => x.CreatedBy).HasMaxLength(50);
+        //modelBuilder.Entity<MyUser>().Property(x => x.UpdatedBy).HasMaxLength(50);
+        //modelBuilder.Entity<MyUser>().Property(x => x.DeletedBy).HasMaxLength(50);
 
 
-        modelBuilder.Entity<MyUser>()
-            .Property(x => x.PhoneNumber)
-            .HasConversion(
-                v => EncryptionHelper.Encrypt(v),
-                v => EncryptionHelper.Decrypt(v)
-            )
-            .HasMaxLength(256);
+        //modelBuilder.Entity<MyUser>()
+        //    .Property(x => x.PhoneNumber)
+        //    .HasConversion(
+        //        v => EncryptionHelper.Encrypt(v),
+        //        v => EncryptionHelper.Decrypt(v)
+        //    )
+        //    .HasMaxLength(256);
 
-        // Only return the non-deleted items
-        modelBuilder.Entity<MyUser>().HasQueryFilter(x => EF.Property<bool>(x, "IsDeleted") == false);
+        //// Only return the non-deleted items
+        //modelBuilder.Entity<MyUser>().HasQueryFilter(x => EF.Property<bool>(x, "IsDeleted") == false);
 
-        modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
-        #endregion
+        //modelBuilder.Entity<MyUser>().HasIndex(u => u.Email).IsUnique().HasDatabaseName("IX_MyUser_Email");
+        //#endregion
 
-        #region Usertag & Useroption
-        modelBuilder.Entity<MyUser>()
-            .HasMany(x => x.userOptions)
-            .WithOne()
-            .HasForeignKey("MyUserId").IsRequired().IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
+        //#region Usertag & Useroption
+        //modelBuilder.Entity<MyUser>()
+        //    .HasMany(x => x.userOptions)
+        //    .WithOne()
+        //    .HasForeignKey("MyUserId").IsRequired().IsRequired()
+        //    .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<UserOption>().HasKey(x => x.Id);
-        modelBuilder.Entity<UserOption>().Property(x => x.Description).HasMaxLength(50);
-        modelBuilder.Entity<UserOption>().ToTable("UserOptions");
+        //modelBuilder.Entity<UserOption>().HasKey(x => x.Id);
+        //modelBuilder.Entity<UserOption>().Property(x => x.Description).HasMaxLength(50);
+        //modelBuilder.Entity<UserOption>().ToTable("UserOptions");
 
-        modelBuilder.Entity<MyUser>()
-            .OwnsMany(x => x.userTags, tag => {
-                tag.WithOwner().HasForeignKey("MyUserId");
-                tag.Property(x => x.Title).HasMaxLength(20);
-                tag.Property(x => x.Priority).IsRequired();
-                tag.HasKey("MyUserId", "Title", "Priority");
-                tag.ToTable("UserTags");
-            });
-        #endregion
+        //modelBuilder.Entity<MyUser>()
+        //    .OwnsMany(x => x.userTags, tag => {
+        //        tag.WithOwner().HasForeignKey("MyUserId");
+        //        tag.Property(x => x.Title).HasMaxLength(20);
+        //        tag.Property(x => x.Priority).IsRequired();
+        //        tag.HasKey("MyUserId", "Title", "Priority");
+        //        tag.ToTable("UserTags");
+        //    });
+        //#endregion
 
-        #region BackOfficeUser
+        //#region BackOfficeUser
 
-        modelBuilder.Entity<BackOfficeUser>().HasKey(x => x.Id);
+        //modelBuilder.Entity<BackOfficeUser>().HasKey(x => x.Id);
 
-        modelBuilder.Entity<BackOfficeUser>().Property(x => x.Username).HasMaxLength(50);
-        modelBuilder.Entity<BackOfficeUser>().Property(x => x.Password).HasMaxLength(1000);
+        //modelBuilder.Entity<BackOfficeUser>().Property(x => x.Username).HasMaxLength(50);
+        //modelBuilder.Entity<BackOfficeUser>().Property(x => x.Password).HasMaxLength(1000);
 
-        modelBuilder.Entity<BackOfficeUser>().HasData([
-                new BackOfficeUser{ Id = 1, Username = "Edris", Password = "123"}
-            ]);
+        //modelBuilder.Entity<BackOfficeUser>().HasData([
+        //        new BackOfficeUser{ Id = 1, Username = "Edris", Password = "123"}
+        //    ]);
 
-        modelBuilder.Entity<BackOfficeUser>().ToTable("BackOfficeUsers", "bo");
+        //modelBuilder.Entity<BackOfficeUser>().ToTable("BackOfficeUsers", "bo");
 
-        #endregion
+        //#endregion
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(MyDbContext).Assembly);
 
         #region City & Country
         modelBuilder.Entity<City>().HasKey(x => x.Id);

@@ -11,6 +11,31 @@ public class UserRepository(MyDbContext db, ICurrentUser currentUser) : IUserRep
 {
     private readonly DbSet<MyUser> set = db.Set<MyUser>();
 
+    private IQueryable<MyUser> GetQueryable(IQueryable<MyUser> query)
+    {
+        if (currentUser.HasGodAccess)
+        {
+            query = query.IgnoreQueryFilters();
+        }
+
+        return query;
+    }
+
+    private IQueryable<MyUser> GetGeneralQueryable()
+    {
+        var query = set.AsQueryable();
+
+        return GetQueryable(query);
+    }
+
+    private IQueryable<MyUser> GetReadOnlyQueryable()
+    {
+        var query = set.AsNoTracking().AsQueryable();
+
+        return GetQueryable(query);
+    }
+
+
     public async Task AddAsync(MyUser user, CancellationToken cancellationToken)
     {
         user.Create(currentUser.Username);
@@ -39,7 +64,7 @@ public class UserRepository(MyDbContext db, ICurrentUser currentUser) : IUserRep
 
     public async Task<MyUser?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await set
+        return await GetGeneralQueryable()
             .Include(x => x.userOptions)
             .Include(x => x.userTags)
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -47,7 +72,7 @@ public class UserRepository(MyDbContext db, ICurrentUser currentUser) : IUserRep
 
     public async Task<(int, List<MyUser>)> GetListAsync(BaseSpecification<MyUser> specification, CancellationToken cancellationToken)
     {
-        var usersQuery = db.Users.AsNoTracking().Specify(specification);
+        var usersQuery = GetReadOnlyQueryable().AsNoTracking().Specify(specification);
 
         var totalCount = 0;
 
