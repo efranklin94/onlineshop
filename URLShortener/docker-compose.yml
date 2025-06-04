@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  urlshortener-mongo:
+    image: mongo:latest
+    container_name: urlshortener-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+      - "27027:27027"
+    command: ["mongod", "--port", "27027"]
+    volumes:
+      - urlshortener-mongo-volume:/data/db
+
+volumes:
+  urlshortener-mongo-volume:
+    external: true
+
+networks:
+  default:
+    external:
+      name: urlshortener-services
